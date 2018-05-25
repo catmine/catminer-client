@@ -1,0 +1,46 @@
+%h1= @rig.hostname
+%h3 สถานะ
+%table.table.table-responsive.table-striped
+  %thead
+    %tr
+      %th{ scope: 'col' } รายการ
+      %th{ scope: 'col' } ค่า
+  %tbody
+    %tr
+      %td First Seen
+      %td= @rig.first_seen_at
+    %tr
+      %td คำสั่งปัจจุบัน
+      %td
+    %tr
+      %td GPUs
+      %td= @rig.gpus.count
+    %tr
+      %td AV Utilization (%)
+      %td= @rig.utilization
+    %tr
+      %td Power (W)
+      %td= @rig.power
+    %tr
+      %td AV Temp (C)
+      %td= @rig.temperature
+%hr/
+%h3 GPUs
+%table.table.table-responsive.table-striped
+  %thead
+    %tr
+      %th{ scope: 'col' } No
+      %th{ scope: 'col' } GPU
+      %th{ scope: 'col' } Utilization (%)
+      %th{ scope: 'col' } Power (W)
+      %th{ scope: 'col' } Temp (C)
+  %tbody
+    - i = 1
+    - @rig.gpus.each do |gpu|
+      %tr
+        %td= i
+        %td= gpu[:name]
+        %td= gpu[:utilization]
+        %td= gpu[:power]
+        %td= gpu[:temperature]
+      - i += 1

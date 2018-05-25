@@ -30,6 +30,23 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+# General
+gem 'haml-rails'
+gem 'html2haml'
+gem 'cancancan'
+gem 'annotate'
+gem 'nested_scaffold'
+gem 'simple_form'
+gem 'enum_help'
+gem 'chartkick'
+gem 'sshkit'
+
+# CSS
+gem 'bootstrap'
+gem 'jquery-rails'
+gem 'popper_js'
+gem 'font-awesome-sass'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -37,8 +54,15 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 2.13'
-  gem 'selenium-webdriver'
+  
+  gem 'rspec-rails', '~> 3.0'
+  gem 'capybara'
+  gem 'capybara-webkit'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'database_cleaner'
+  gem 'timecop'
+  gem 'launchy'
 end
 
 group :development do
@@ -48,6 +72,13 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+
+  gem 'capistrano', '~> 3.10', require: false
+  gem 'capistrano-rails', '~> 1.3', require: false
+  gem 'capistrano-passenger', require: false
+  gem 'capistrano-rbenv', '~> 2.1', require: false
+  gem 'capistrano-bundler', '~> 1.3', require: false
+  gem 'capistrano-rails-console', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
