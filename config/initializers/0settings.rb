@@ -1,1 +1,1 @@
-require_relative '../../lib/models/rig.rb'
+require_relative '../../lib/models/machine.rb'

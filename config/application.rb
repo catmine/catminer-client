@@ -18,7 +18,7 @@ module CatminerClient
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
 
-    config.autoload_paths << Rails.root.join('lib/models')
+    #config.autoload_paths << Rails.root.join('lib/models')
 
     config.generators do |g|
       g.template_engine :haml

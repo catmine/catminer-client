@@ -1,17 +1,19 @@
 # == Schema Information
 #
-# Table name: settings
+# Table name: rigs
 #
 #  id         :integer          not null, primary key
-#  parameter  :string
-#  value      :text
+#  name       :string
+#  uuid       :string
+#  secret     :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 
 FactoryBot.define do
-  factory :setting do
-    parameter "MyString"
-    name "MyText"
+  factory :rig do
+    name "MyString"
+    uuid "MyString"
+    secret "MyString"
   end
 end

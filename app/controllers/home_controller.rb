@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    @rig = CatminerClient::Rig.new
+    @rig = Rig.default
   end
 end

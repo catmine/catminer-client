@@ -1,17 +1,22 @@
 class SettingsController < ApplicationController
   def index
     @page_title = 'Settings'
-    @rig = CatminerClient::Rig.new
+    @rig = Rig.default
   end
 
   def save
-    @rig = CatminerClient::Rig.new
+    @rig = Rig.default
+    if @rig.update(rig_params)
+      flash[:notice] = 'Your settings have been saved.'
+    else
+      flash[:alert] = 'Error!'
+    end
 
-    @rig.hostname = params[:rig][:hostname]
-
-    p params[:rig][:overclock_gpus].count
-
-    flash[:notice] = 'Your settings have been saved.'
     render 'index'
   end
+
+  private
+    def rig_params
+      params.require(:rig).permit :name, gpus_attributes: [:id, :power_limit, :mem_clock, :gpu_clock]
+    end
 end

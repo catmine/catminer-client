@@ -1,4 +1,4 @@
-%h1= @rig.hostname
+%h1= @rig.name
 %h3 Rig Status
 %table.table.table-responsive.table-striped
   %thead
@@ -8,7 +8,7 @@
   %tbody
     %tr
       %td First Seen
-      %td= l @rig.first_seen_at, format: :long
+      %td= l @rig.created_at, format: :long
     %tr
       %td Current mining command
       %td
@@ -36,7 +36,7 @@
       %th{ scope: 'col' } Temp (C)
   %tbody
     - i = 1
-    - @rig.gpus.each do |gpu|
+    - @rig.gpus.enable.each do |gpu|
       %tr
         %td= i
         %td= gpu[:name]

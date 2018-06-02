@@ -1,16 +1,17 @@
 # == Schema Information
 #
-# Table name: settings
+# Table name: rigs
 #
 #  id         :integer          not null, primary key
-#  parameter  :string
-#  value      :text
+#  name       :string
+#  uuid       :string
+#  secret     :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 
 require 'rails_helper'
 
-RSpec.describe Setting, type: :model do
+RSpec.describe Rig, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end

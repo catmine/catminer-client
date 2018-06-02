@@ -1,4 +1,16 @@
 namespace :miners do
+  desc 'Download & Compile All miner'
+  task :all do
+    task :ethminer do
+      run_locally do
+        within Dir.pwd do
+          execute 'rake miners:ccminer'
+          execute 'rake miners:ethminer'
+        end
+      end
+    end
+  end
+
   desc 'CCMiner - Download & Compile miner'
   task :ccminer do
     run_locally do
