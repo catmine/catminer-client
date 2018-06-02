@@ -22,4 +22,10 @@
 
 %br
 
-= link_to 'New Mining', new_mining_path
+= link_to new_mining_path, class: 'btn btn-primary' do
+  = icon 'play'
+  Set Mining
+&nbsp;
+= link_to minings_stop_path, class: 'btn btn-danger' do
+  = icon 'stop'
+  Stop Mining

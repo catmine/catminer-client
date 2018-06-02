@@ -4,6 +4,7 @@ class MiningsController < ApplicationController
   # GET /minings
   # GET /minings.json
   def index
+    @page_title = Mining
     @minings = Mining.all
   end
 
@@ -49,6 +50,11 @@ class MiningsController < ApplicationController
         format.json { render json: @mining.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def stop
+    rig = Rig.default
+    rig.stop_mining
   end
 
   # DELETE /minings/1

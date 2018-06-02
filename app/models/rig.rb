@@ -12,6 +12,7 @@
 
 class Rig < ApplicationRecord
   has_many :gpus, inverse_of: :rig
+  has_many :minings
 
   accepts_nested_attributes_for :gpus
 
@@ -89,6 +90,10 @@ class Rig < ApplicationRecord
         gpu.gpu_clock = gpu_clock
       end
     end
+  end
+
+  def stop_mining
+    self.minings.create code: 0
   end
 
   def temperature

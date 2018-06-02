@@ -73,5 +73,13 @@ module CatminerClient
         i += 1
       end
     end
+
+    def reboot
+      `sudo reboot`
+    end
+
+    def shutdown
+      `sudo shutdown`
+    end
   end
 end

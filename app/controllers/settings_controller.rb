@@ -15,6 +15,18 @@ class SettingsController < ApplicationController
     render 'index'
   end
 
+  def shutdown
+    @rig = Rig.default
+    machine = CatminerClient::Machine.new
+    machine.shutdown
+  end
+
+  def reboot
+    @rig = Rig.default
+    machine = CatminerClient::Machine.new
+    machine.reboot
+  end
+
   private
     def rig_params
       params.require(:rig).permit :name, gpus_attributes: [:id, :power_limit, :mem_clock, :gpu_clock]

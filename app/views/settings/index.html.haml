@@ -23,4 +23,13 @@
           %td= gpu_f.input :gpu_clock, label: false
         - i += 1
   .form-actions
-    = f.submit 'Save'
+    = f.submit 'Save', class: 'btn btn-primary'
+%hr/
+%h1 Command
+= link_to settings_reboot_path, class: 'btn btn-warning' do
+  = icon 'undo'
+  Reboot
+&nbsp;
+= link_to settings_shutdown_path, class: 'btn btn-danger' do
+  = icon 'stop'
+  Shutdown
