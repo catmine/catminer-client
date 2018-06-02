@@ -1,0 +1,25 @@
+%h1 Listing minings
+
+%table
+  %thead
+    %tr
+      %th Rig
+      %th Code
+      %th Args
+      %th
+      %th
+      %th
+
+  %tbody
+    - @minings.each do |mining|
+      %tr
+        %td= mining.rig
+        %td= mining.code
+        %td= mining.args
+        %td= link_to 'Show', mining
+        %td= link_to 'Edit', edit_mining_path(mining)
+        %td= link_to 'Destroy', mining, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Mining', new_mining_path

@@ -1,0 +1,10 @@
+= simple_form_for(@mining) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.association :rig
+    = f.input :code
+    = f.input :args
+
+  .form-actions
+    = f.button :submit

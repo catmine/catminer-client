@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Rig:
+  = @mining.rig
+%p
+  %b Code:
+  = @mining.code
+%p
+  %b Args:
+  = @mining.args
+
+= link_to 'Edit', edit_mining_path(@mining)
+\|
+= link_to 'Back', minings_path
