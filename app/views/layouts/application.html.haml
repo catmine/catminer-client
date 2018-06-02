@@ -10,14 +10,23 @@
   %body
     %nav.navbar.navbar-expand-lg.navbar-light.bg-light
       %a.navbar-brand{:href => root_url} Cat Miner
-      %button.navbar-toggler{"aria-controls" => "navbarSupportedContent", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbarSupportedContent", "data-toggle" => "collapse", :type => "button"}
+      %button.navbar-toggler{"aria-controls" => "navbar", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbar", "data-toggle" => "collapse", :type => "button"}
         %span.navbar-toggler-icon
-      #navbarSupportedContent.collapse.navbar-collapse
+      #navbar.collapse.navbar-collapse
         %ul.navbar-nav.mr-auto
-          %li.nav-item.active
+          %li.nav-item.nav-link.active
             %a{ href: root_path }
-              Stat
+              Status
               %span.sr-only (current)
+          %li.nav-item.nav-link
+            %a{ href: root_path }
+              Logs
+          %li.nav-item.nav-link
+            %a{ href: root_path }
+              Mining
+          %li.nav-item.nav-link
+            %a{ href: settings_path }
+              Settings
     - if alert.present?
       .container-fluid
         .alert.alert-danger{ role: 'alert' }

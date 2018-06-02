@@ -79,6 +79,9 @@ group :development do
   gem 'capistrano-rbenv', '~> 2.1', require: false
   gem 'capistrano-bundler', '~> 1.3', require: false
   gem 'capistrano-rails-console', require: false
+
+  gem 'better_errors'
+  gem 'binding_of_caller'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

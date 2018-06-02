@@ -1,5 +1,5 @@
 %h1= @rig.hostname
-%h3 สถานะ
+%h3 Rig Status
 %table.table.table-responsive.table-striped
   %thead
     %tr
@@ -8,9 +8,9 @@
   %tbody
     %tr
       %td First Seen
-      %td= @rig.first_seen_at
+      %td= l @rig.first_seen_at, format: :long
     %tr
-      %td คำสั่งปัจจุบัน
+      %td Current mining command
       %td
     %tr
       %td GPUs

@@ -1,0 +1,25 @@
+%h1 Settings
+= @rig.model_name
+= simple_form_for @rig, url: settings_path do |f|
+  = f.input :hostname
+  %h2 Overclock
+  %table.table.table-responsive.table-striped
+    %thead
+      %tr
+        %th{ scope: 'col' } No
+        %th{ scope: 'col' } GPU
+        %th{ scope: 'col' } Power limit (W)
+        %th{ scope: 'col' } Memory overclock (Hz)
+        %th{ scope: 'col' } GPU overclock (Hz)
+    %tbody
+      - i = 1
+      = f.simple_fields_for(:overclock_gpus) do |overclock_gpu_f|
+        %tr
+          %td= i
+          %td= overclock_gpu_f
+          %td= overclock_gpu_f.input :power, label: false
+          %td= overclock_gpu_f.input :mem_clock, label: false
+          %td= overclock_gpu_f.input :gpu_clock, label: false
+        - i += 1
+  .form-actions
+    = f.submit 'Save'

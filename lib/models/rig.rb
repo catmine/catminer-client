@@ -1,5 +1,8 @@
 module CatminerClient
   class Rig
+    extend ActiveModel::Naming
+
+    include ActiveModel::Conversion
     include SSHKit::DSL
 
     def initialize
@@ -8,38 +11,15 @@ module CatminerClient
       if setting.value.present?
         @first_seen_at = DateTime.parse setting.value
       else
-        @first_seen_at = Time.zone.now
+        @first_seen_at = Time.zone.now.localtime
         setting.update value: @first_seen_at
       end
+
+      self.overclock_gpus
     end
 
-    def hostname
-      hostname = nil
-
-      run_locally do
-        as :root do
-          setting = Setting.where(parameter: 'hostname').first_or_initialize
-          hostname = capture(:cat, '/etc/hostname').strip
-          setting.update value: hostname
-        end
-      end
-
-      hostname
-    end
-
-    def hostname=(_hostname)
-      run_locally do
-        as :root do
-          hostname = capture(:cat, '/etc/hostname').strip
-          
-          execute "hostname #{_hostname}"
-          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hostname"
-          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hosts"
-
-          setting = Setting.where(parameter: 'hostname').first_or_initialize
-          setting.update value: _hostname
-        end
-      end
+    def first_seen_at
+      @first_seen_at
     end
 
     def gpus
@@ -74,18 +54,120 @@ module CatminerClient
       @gpus
     end
 
-    def first_seen_at
-      @first_seen_at
-    end
+    def hostname
+      hostname = nil
 
-    def utilization
-      u = 0
-
-      gpus.each do |gpu|
-        u += gpu[:utilization].to_f
+      run_locally do
+        as :root do
+          setting = Setting.where(parameter: 'hostname').first_or_initialize
+          hostname = capture(:cat, '/etc/hostname').strip
+          setting.update value: hostname
+        end
       end
 
-      "#{u / self.gpus.count} %"
+      hostname
+    end
+
+    def hostname=(_hostname)
+      run_locally do
+        as :root do
+          hostname = capture(:cat, '/etc/hostname').strip
+          
+          execute "sudo hostname #{_hostname}"
+          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hostname"
+          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hosts"
+
+          setting = Setting.where(parameter: 'hostname').first_or_initialize
+          setting.update value: _hostname
+        end
+      end
+    end
+
+    def overclock_gpus
+      setting = Setting.where(parameter: 'overclock_gpus').first_or_initialize
+      gpus = self.gpus
+
+      unless setting.persisted?
+        run_locally do
+          as :root do
+            overclock_gpus = Array.new
+            i = 0
+
+            gpus.each do |gpu|
+              if gpu[:name].include? 'GeForce'
+                power = 0
+                mem_clock = 150
+                gpu_clock = 500
+
+                # power consumption from url: https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
+                if gpu[:name].include? '1030'
+                  power = 30 * 0.75
+                elsif gpu[:name].include?  '1050'
+                  power = 75 * 0.75
+                elsif gpu[:name].include?('1060') || gpu[:name].include?('P106')
+                  power = 120 * 0.65
+                elsif gpu[:name].include?('1080 Ti') || gpu[:name].include?('P102') || gpu[:name].include?('TITAN')
+                  power = 250 * 0.65
+                elsif gpu[:name].include?('1070 Ti') || gpu[:name].include?('1080') || gpu[:name].include?('P104')
+                  power = 180 * 0.65
+                elsif gpu[:name].include? '1070'
+                  power = 150 * 0.65
+                end
+
+                execute "sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration"
+                execute("nvidia-smi -i #{i} -pl #{power}") if power > 0
+                execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUMemoryTransferRateOffset[3]=#{mem_clock}'"
+                execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUGraphicsClockOffset[3]=#{gpu_clock}'"
+
+                overclock_gpus << { name: gpu[:name], power: power, mem_clock: mem_clock, gpu_clock: gpu_clock }
+
+                i += 1
+              else
+                overclock_gpus << { name: gpu[:name], power: 0, mem_clock: 0, gpu_clock: 0 }
+              end
+            end
+
+            setting.update value: overclock_gpus.to_json
+          end
+        end
+      end
+
+      JSON.parse setting.value
+    end
+
+    def overclock_gpus=(_gpu_settings)
+      setting = Setting.where(parameter: 'overclock_gpus').first_or_initialize
+      gpus = self.gpus
+
+      run_locally do
+        as :root do
+          overclock_gpus = Array.new
+          i = 0
+
+          _gpu_settings.each do |gpu_setting|
+            if _gpu_settings['name'].include? 'GeForce'
+              power = gpu_setting['power']
+              mem_clock = gpu_setting['mem_clock']
+              gpu_clock = gpu_setting['gpu_clock']
+
+              execute "sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration"
+              execute "nvidia-smi -i #{i} -pl #{power}"
+              execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUMemoryTransferRateOffset[3]=#{mem_clock}'"
+              execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUGraphicsClockOffset[3]=#{gpu_clock}'"
+
+              overclock_gpus << { name: _gpu_settings[:name], power: power, mem_clock: mem_clock, gpu_clock: gpu_clock }
+
+              i += 1
+            else
+              overclock_gpus << { name: _gpu_settings[:name], power: 0, mem_clock: 0, gpu_clock: 0 }
+            end
+          end
+
+          setting.update value: overclock_gpus.to_json
+        end
+      end
+
+      JSON.parse setting.value
     end
 
     def power
@@ -106,6 +188,16 @@ module CatminerClient
       end
 
       "#{t / gpus.count} C"
+    end
+
+    def utilization
+      u = 0
+
+      gpus.each do |gpu|
+        u += gpu[:utilization].to_f
+      end
+
+      "#{u / self.gpus.count} %"
     end
   end
 end
