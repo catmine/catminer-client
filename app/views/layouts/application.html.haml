@@ -16,13 +16,16 @@
         %ul.navbar-nav.mr-auto
           %li.nav-item.nav-link.active
             %a{ href: root_path }
+              = icon 'fas', 'chart-bar'
               Status
               %span.sr-only (current)
           %li.nav-item.nav-link
             %a{ href: minings_path }
+              = icon 'fas', 'play'
               Mining
           %li.nav-item.nav-link
             %a{ href: settings_path }
+              = icon 'fas', 'cog'
               Settings
     - if alert.present?
       .container-fluid
