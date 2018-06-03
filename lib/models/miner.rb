@@ -12,9 +12,12 @@ module CatminerClient
 
     def start(cmd)
       Rails.application.reloader.wrap do
+        @rig = Rig.default
         self.stop
 
         @thread = Thread.new do
+          MiningLog.create rig: @rig, line: '==================== Start Mining ===================='
+
           begin
             PTY.spawn(cmd) do |stdout, stdin, pid|
               @pid = pid
@@ -36,6 +39,8 @@ module CatminerClient
       if @pid.present?
         system "sudo kill -9 #{@pid}"
         system "sudo kill -9 #{@pid + 1}"
+
+        MiningLog.create rig: @rig, line: '==================== Stop Mining ===================='
 
         @pid = nil
       end

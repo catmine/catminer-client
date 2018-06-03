@@ -5,7 +5,8 @@
 #  id         :integer          not null, primary key
 #  rig_id     :integer
 #  code       :integer
-#  args       :text
+#  miner      :integer
+#  arg        :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -15,26 +16,27 @@
 #
 
 class Mining < ApplicationRecord
+  enum miner: { ccminer: 0, claymore: 1, ethminer: 2, ewbf_miner: 3 }
+
   belongs_to :rig
 
   after_commit :start_mining
 
-  def execute_args_string
+  def execute_cmd
     if code == 1
-      args = JSON.parse self.args
       miner_path = ''
 
-      if args['miner'] == 'ccminer'
+      if self.miner == 'ccminer'
         miner_path = "cd #{Dir.pwd}/vendor/miners/ccminer && ./ccminer"
-      elsif args['miner'] == 'claymore'
+      elsif self.miner == 'claymore'
         miner_path = "cd #{Dir.pwd}/vendor/miners/claymore && ./ethdcrminer64"
-      elsif args['miner'] == 'ethminer'
+      elsif self.miner == 'ethminer'
         miner_path = "cd #{Dir.pwd}/vendor/miners/ethminer/bin && ./ethminer"
-      elsif args['miner'] == 'ewbf_miner'
+      elsif self.miner == 'ewbf_miner'
         miner_path = "cd #{Dir.pwd}/vendor/miners/ewbf-miner && ./miner"
       end
 
-      "#{miner_path} #{args['args']}"
+      "#{miner_path} #{self.arg}"
     else
       ''
     end
@@ -52,7 +54,7 @@ class Mining < ApplicationRecord
     if code == 0
       'Stop Mining'
     else
-      execute_args_string
+      execute_cmd
     end
   end
 end

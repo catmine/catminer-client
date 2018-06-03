@@ -7,7 +7,5 @@ Rails.application.routes.draw do
   get 'settings/shutdown'
   get 'settings/reboot'
 
-  get 'logs', to: 'home#logs'
-
   root 'home#index'
 end

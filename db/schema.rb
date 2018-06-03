@@ -43,7 +43,8 @@ ActiveRecord::Schema.define(version: 20180603043730) do
   create_table "minings", force: :cascade do |t|
     t.integer "rig_id"
     t.integer "code"
-    t.text "args"
+    t.integer "miner"
+    t.text "arg"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["rig_id"], name: "index_minings_on_rig_id"

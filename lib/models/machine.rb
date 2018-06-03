@@ -48,10 +48,13 @@ module CatminerClient
       run_locally do
         as :root do
           hostname = capture(:cat, '/etc/hostname').strip
+          _hostname = _hostname.strip
           
-          execute "sudo hostname #{_hostname}"
-          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hostname"
-          execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hosts"
+          if hostname != _hostname
+            execute "sudo hostname #{_hostname}"
+            execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hostname"
+            execute "sudo sed -i -e 's/#{hostname}/#{_hostname}/g' /etc/hosts"
+          end
         end
       end
     end

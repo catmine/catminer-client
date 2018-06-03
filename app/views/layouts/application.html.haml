@@ -19,9 +19,6 @@
               Status
               %span.sr-only (current)
           %li.nav-item.nav-link
-            %a{ href: logs_path }
-              Logs
-          %li.nav-item.nav-link
             %a{ href: minings_path }
               Mining
           %li.nav-item.nav-link
@@ -41,3 +38,13 @@
             %span{ 'aria-hidden': 'true' } &times;
     .container-fluid
       = yield
+      %footer
+        %hr/
+        %p.text-center
+          %strong CatMiner Client
+          by
+          %strong
+            %a{ href: 'https://www.catmine.co' } CatMine
+          publish and develop under
+          %strong GPL Lisence
+          , 2018

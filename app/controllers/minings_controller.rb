@@ -5,7 +5,7 @@ class MiningsController < ApplicationController
   # GET /minings.json
   def index
     @page_title = Mining
-    @minings = Mining.all
+    @mining_logs = Rig.default.mining_logs.order('id DESC').limit(1000)
   end
 
   # GET /minings/1
@@ -15,7 +15,7 @@ class MiningsController < ApplicationController
 
   # GET /minings/new
   def new
-    @mining = Mining.new
+    @mining = Mining.new rig: Rig.default, code: 1
   end
 
   # GET /minings/1/edit
@@ -29,8 +29,8 @@ class MiningsController < ApplicationController
 
     respond_to do |format|
       if @mining.save
-        format.html { redirect_to @mining, notice: 'Mining was successfully created.' }
-        format.json { render :show, status: :created, location: @mining }
+        format.html { redirect_to minings_path, notice: 'Mining has been set.' }
+        format.json { render :show, status: :created, location: minings_path }
       else
         format.html { render :new }
         format.json { render json: @mining.errors, status: :unprocessable_entity }
@@ -43,7 +43,7 @@ class MiningsController < ApplicationController
   def update
     respond_to do |format|
       if @mining.update(mining_params)
-        format.html { redirect_to @mining, notice: 'Mining was successfully updated.' }
+        format.html { redirect_to @mining, notice: 'Mining has been set.' }
         format.json { render :show, status: :ok, location: @mining }
       else
         format.html { render :edit }
@@ -55,6 +55,9 @@ class MiningsController < ApplicationController
   def stop
     rig = Rig.default
     rig.stop_mining
+
+    flash[:notice] = 'Mining has been stop.'
+    redirect_to minings_path
   end
 
   # DELETE /minings/1
@@ -75,6 +78,6 @@ class MiningsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def mining_params
-      params.require(:mining).permit(:rig_id, :code, :args)
+      params.require(:mining).permit(:rig_id, :code, :miner, :arg)
     end
 end

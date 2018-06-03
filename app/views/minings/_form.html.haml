@@ -2,9 +2,10 @@
   = f.error_notification
 
   .form-inputs
-    = f.association :rig
-    = f.input :code
-    = f.input :args
+    = f.input :rig_id, as: :hidden
+    = f.input :code, as: :hidden
+    = f.input :miner
+    = f.input :arg
 
   .form-actions
-    = f.button :submit
+    = f.submit "Start Mining", class: 'btn btn-primary'

@@ -1,27 +1,4 @@
-%h1 Listing minings
-
-%table
-  %thead
-    %tr
-      %th Rig
-      %th Code
-      %th Args
-      %th
-      %th
-      %th
-
-  %tbody
-    - @minings.each do |mining|
-      %tr
-        %td= mining.rig
-        %td= mining.code
-        %td= mining.args
-        %td= link_to 'Show', mining
-        %td= link_to 'Edit', edit_mining_path(mining)
-        %td= link_to 'Destroy', mining, method: :delete, data: { confirm: 'Are you sure?' }
-
-%br
-
+%h1 Mining
 = link_to new_mining_path, class: 'btn btn-primary' do
   = icon 'play'
   Set Mining
@@ -29,3 +6,9 @@
 = link_to minings_stop_path, class: 'btn btn-danger' do
   = icon 'stop'
   Stop Mining
+%hr/
+%h1 Logs
+%p
+  - @mining_logs.each do |mining_log|
+    = mining_log.log_line
+    %br/

@@ -101,7 +101,7 @@ class Rig < ApplicationRecord
       if mining.code == 0
         $miner.stop
       elsif mining.code == 1
-        $miner.start mining.execute_args_string
+        $miner.start mining.execute_cmd
       end
     end
   end

@@ -5,7 +5,8 @@
 #  id         :integer          not null, primary key
 #  rig_id     :integer
 #  code       :integer
-#  args       :text
+#  miner      :integer
+#  arg        :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
