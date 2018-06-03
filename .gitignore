@@ -23,3 +23,7 @@
 .byebug_history
 
 /vendor/miners
+/vendor/drivers
+
+machines.json
+machines.json.default
