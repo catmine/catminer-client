@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180602100324) do
+ActiveRecord::Schema.define(version: 20180603043730) do
 
   create_table "gpus", force: :cascade do |t|
     t.string "name"
@@ -30,6 +30,14 @@ ActiveRecord::Schema.define(version: 20180602100324) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["rig_id"], name: "index_gpus_on_rig_id"
+  end
+
+  create_table "mining_logs", force: :cascade do |t|
+    t.integer "rig_id"
+    t.text "line"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rig_id"], name: "index_mining_logs_on_rig_id"
   end
 
   create_table "minings", force: :cascade do |t|

@@ -17,25 +17,31 @@
 class Mining < ApplicationRecord
   belongs_to :rig
 
+  after_commit :start_mining
+
   def execute_args_string
     if code == 1
       args = JSON.parse self.args
       miner_path = ''
 
       if args['miner'] == 'ccminer'
-        miner_path = "#{Dir.pwd}/miners/ccminer/ccminer"
+        miner_path = "cd #{Dir.pwd}/vendor/miners/ccminer && ./ccminer"
       elsif args['miner'] == 'claymore'
-        miner_path = "#{Dir.pwd}/miners/claymore/ethdcrminer64"
+        miner_path = "cd #{Dir.pwd}/vendor/miners/claymore && ./ethdcrminer64"
       elsif args['miner'] == 'ethminer'
-        miner_path = "#{Dir.pwd}/miners/ethminer/bin/ethminer"
+        miner_path = "cd #{Dir.pwd}/vendor/miners/ethminer/bin && ./ethminer"
       elsif args['miner'] == 'ewbf_miner'
-        miner_path = "#{Dir.pwd}/miners/ewbf-miner/miner"
+        miner_path = "cd #{Dir.pwd}/vendor/miners/ewbf-miner && ./miner"
       end
 
-      ".#{miner_path} #{args['args']}"
+      "#{miner_path} #{args['args']}"
     else
       ''
     end
+  end
+
+  def start_mining
+    self.rig.start_mining
   end
 
   def to_s

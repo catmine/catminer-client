@@ -79,7 +79,7 @@ module CatminerClient
     end
 
     def shutdown
-      `sudo shutdown`
+      `sudo shutdown now`
     end
   end
 end

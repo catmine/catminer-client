@@ -12,6 +12,7 @@
 
 class Rig < ApplicationRecord
   has_many :gpus, inverse_of: :rig
+  has_many :mining_logs
   has_many :minings
 
   accepts_nested_attributes_for :gpus
@@ -92,8 +93,22 @@ class Rig < ApplicationRecord
     end
   end
 
+  def start_mining
+    $miner ||= CatminerClient::Miner.new(Rig.default)
+    mining = self.minings.last
+
+    if mining.present?
+      if mining.code == 0
+        $miner.stop
+      elsif mining.code == 1
+        $miner.start mining.execute_args_string
+      end
+    end
+  end
+
   def stop_mining
     self.minings.create code: 0
+    self.start_mining
   end
 
   def temperature

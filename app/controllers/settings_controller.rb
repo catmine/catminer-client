@@ -17,13 +17,13 @@ class SettingsController < ApplicationController
 
   def shutdown
     @rig = Rig.default
-    machine = CatminerClient::Machine.new
+    machine = CatminerClient::Machine.new @rig
     machine.shutdown
   end
 
   def reboot
     @rig = Rig.default
-    machine = CatminerClient::Machine.new
+    machine = CatminerClient::Machine.new @rig
     machine.reboot
   end
 

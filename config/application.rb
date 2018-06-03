@@ -31,5 +31,14 @@ module CatminerClient
         :controller_specs => false,
         :helper_specs => false
     end
+
+    config.after_initialize do
+      begin
+        ActiveRecord::Migration.check_pending!
+        rig = Rig.default
+        rig.start_mining
+      rescue ActiveRecord::PendingMigrationError
+      end
+    end
   end
 end
