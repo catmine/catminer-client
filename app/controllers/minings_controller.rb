@@ -15,6 +15,7 @@ class MiningsController < ApplicationController
 
   # GET /minings/new
   def new
+    @page_title = 'Set mining'
     @mining = Mining.new rig: Rig.default, code: 1
   end
 

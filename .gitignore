@@ -22,6 +22,7 @@
 
 .byebug_history
 
+/public/assets
 /vendor/miners
 /vendor/drivers
 

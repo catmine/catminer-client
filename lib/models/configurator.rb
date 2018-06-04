@@ -82,17 +82,16 @@ module CatminerClient
             execute 'echo "[Service]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "User=ubuntu" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WorkingDirectory=/home/' + user + '/catminer-client" | sudo tee --append /etc/systemd/system/catminer-client.service'
-            execute 'echo "ExecStart=/home/' + user + '/catminer-client/bin/start env=production" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "ExecStart=RAILS_ENV=production RAILS_SERVE_STATIC_FILES=true bundle exec /home/' + user + '/catminer-client/puma -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Restart=always" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "[Install]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WantedBy=multi-user.target" | sudo tee --append /etc/systemd/system/catminer-client.service'
           end
 
-          if test "mkdir /home/' + user + '/.catminer-client"
-            execute "chown $USER:$USER -R /home/' + user + '/.catminer-client"
-          end
-
           execute 'cd /home/' + user + '/catminer-client && sudo bundle install'
+          test 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:create'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
           execute 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'

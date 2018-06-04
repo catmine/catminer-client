@@ -4,6 +4,6 @@ class ApplicationController < ActionController::Base
   before_action :application
 
   def application
-    @page_title = 'Cat Miner'
+    @page_title = 'CatMiner Client'
   end
 end

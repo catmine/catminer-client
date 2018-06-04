@@ -3,3 +3,50 @@
 = render 'form'
 
 = link_to 'Back', minings_path
+
+%hr/
+%h2 Help
+%p You can look up for arguments from below list.
+%ul
+  %li
+    CC Miner -
+    = link_to 'https://github.com/tpruvot/ccminer/blob/windows/README.txt'
+  %li
+    Claymore -
+    = link_to 'https://github.com/nanopool/Claymore-Dual-Miner'
+  %li
+    Ethminer -
+    = link_to 'https://github.com/ethereum-mining/ethminer'
+  %li
+    Ewbf miner -
+    = link_to 'Original from here', 'https://github.com/nanopool/ewbf-miner'
+    but you can get help at
+    = link_to 'https://github.com/nemosminer/EWBF-Zec-Miner/blob/master/Help.txt'
+%h2 Example
+%p
+  Here is example of arg for each miner, and if you want to add worker name you can use
+  %strong $HOSTNAME
+  we will replace name of machine to worker name by automatically.
+%ul
+  %li
+    CC Miner
+    %ul
+      %li
+        = '-a neoscrypt -o stratum+tcp://asia1.gobyte.network:4233 -u GMPL211hSnzu3hsmVGZdDoVPcXbvTyAH5b.$HOSTNAME'
+      %li
+        = '-a lyra2v2 -o stratum+tcp://yiimp.gos.cx:4502 -u AJRPfBhmc9gSHev2P1oydKFFEc8uqZUzqw.$HOSTNAME - p c=ABS'
+  %li
+    Claymore
+    %ul
+      %li
+        = '-epool eth-asia1.nanopool.org:9999 -ewal 0xbD66f2dbc698Faf1F8cFd95Dd5e136F9079860Aa/$HOSTNAME/pong@catmine.co -mode 1'
+  %li
+    Eth Miner
+    %ul
+      %li
+        = '--farm-retries 200 -S eth-asia1.nanopool.org:9999 -O 0xbD66f2dbc698Faf1F8cFd95Dd5e136F9079860Aa.$HOSTNAME/pong@catmine.co -U -SP 1'
+  %li
+    Ewbf Miner
+    %ul
+      %li
+        = '--server zec-asia1.nanopool.org --user t1Zy1BiKSRnzrwyoueWCB3ATwjg4fwNvWgk.$HOSTNAME/pong@catmine.co --pass z --port 6666'
