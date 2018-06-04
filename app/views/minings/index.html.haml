@@ -1,4 +1,7 @@
 %h1 Mining
+%p
+  %strong Current mining command:
+  = @mining.to_s
 = link_to new_mining_path, class: 'btn btn-primary' do
   = icon 'fas', 'play'
   Set Mining
@@ -8,6 +11,8 @@
   Stop Mining
 %hr/
 %h1 Logs
+%p
+  %strong currently logs are not auto reload by themself. please, refresh this page manually for got new logs.
 %p
   - @mining_logs.each do |mining_log|
     = mining_log.log_line

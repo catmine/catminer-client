@@ -27,7 +27,34 @@ module CatminerClient
 
           # Upload client
           test 'rm -rf /home/' + user + '/catminer-client'
-          upload! Dir.pwd, '/home/' + user, recursive: true
+
+          upload! Dir.pwd + '/app', '/home/' + user + '/catminer-client/app', recursive: true
+          upload! Dir.pwd + '/bin', '/home/' + user + '/catminer-client/bin', recursive: true
+          upload! Dir.pwd + '/config', '/home/' + user + '/catminer-client/config', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/db'
+
+          upload! Dir.pwd + '/db/migrate', '/home/' + user + '/catminer-client/db/migrate', recursive: true
+          upload! Dir.pwd + '/db/schema.rb', '/home/' + user + '/catminer-client/db/schema.rb'
+          upload! Dir.pwd + '/db/seeds.rb', '/home/' + user + '/catminer-client/db/seeds.rb'
+
+          upload! Dir.pwd + '/lib', '/home/' + user + '/catminer-client/lib', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/log'
+
+          upload! Dir.pwd + '/public', '/home/' + user + '/catminer-client/public', recursive: true
+          upload! Dir.pwd + '/spec', '/home/' + user + '/catminer-client/spec', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/tmp'
+
+          upload! Dir.pwd + '/vendor', '/home/' + user + '/catminer-client/vendor', recursive: true
+
+          upload! Dir.pwd + '/.gitignore', '/home/' + user + '/catminer-client/.gitignore'
+          upload! Dir.pwd + '/config.ru', '/home/' + user + '/catminer-client/config.ru'
+          upload! Dir.pwd + '/Gemfile', '/home/' + user + '/catminer-client/Gemfile'
+          upload! Dir.pwd + '/Gemfile.lock', '/home/' + user + '/catminer-client/Gemfile.lock'
+          upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
+          upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
 
           # Install Nvidia Driver
           execute 'sudo add-apt-repository ppa:graphics-drivers'
@@ -167,9 +194,38 @@ module CatminerClient
       on @machines do
         as user do
           test 'rm -rf /home/' + user + '/catminer-client'
-          upload! Dir.pwd, '/home/' + user, recursive: true
+
+          upload! Dir.pwd + '/app', '/home/' + user + '/catminer-client/app', recursive: true
+          upload! Dir.pwd + '/bin', '/home/' + user + '/catminer-client/bin', recursive: true
+          upload! Dir.pwd + '/config', '/home/' + user + '/catminer-client/config', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/db'
+
+          upload! Dir.pwd + '/db/migrate', '/home/' + user + '/catminer-client/db/migrate', recursive: true
+          upload! Dir.pwd + '/db/schema.rb', '/home/' + user + '/catminer-client/db/schema.rb'
+          upload! Dir.pwd + '/db/seeds.rb', '/home/' + user + '/catminer-client/db/seeds.rb'
+
+          upload! Dir.pwd + '/lib', '/home/' + user + '/catminer-client/lib', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/log'
+
+          upload! Dir.pwd + '/public', '/home/' + user + '/catminer-client/public', recursive: true
+          upload! Dir.pwd + '/spec', '/home/' + user + '/catminer-client/spec', recursive: true
+
+          test 'mkdir /home/' + user + '/catminer-client/tmp'
+
+          upload! Dir.pwd + '/vendor', '/home/' + user + '/catminer-client/vendor', recursive: true
+
+          upload! Dir.pwd + '/.gitignore', '/home/' + user + '/catminer-client/.gitignore'
+          upload! Dir.pwd + '/config.ru', '/home/' + user + '/catminer-client/config.ru'
+          upload! Dir.pwd + '/Gemfile', '/home/' + user + '/catminer-client/Gemfile'
+          upload! Dir.pwd + '/Gemfile.lock', '/home/' + user + '/catminer-client/Gemfile.lock'
+          upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
+          upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
 
           execute 'cd /home/' + user + '/catminer-client && sudo bundle install'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
           execute 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'

@@ -5,7 +5,13 @@ class MiningsController < ApplicationController
   # GET /minings.json
   def index
     @page_title = Mining
-    @mining_logs = Rig.default.mining_logs.order('id DESC').limit(1000)
+
+    rig = Rig.default
+    @mining = rig.minings.last
+
+    rig.stop_mining if @mining.blank?
+
+    @mining_logs = rig.mining_logs.order('id DESC').limit(1000)
   end
 
   # GET /minings/1
