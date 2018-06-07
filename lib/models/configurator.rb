@@ -133,10 +133,15 @@ module CatminerClient
           unless test '[ -f /etc/systemd/system/catminer-client.service ]'
             execute 'echo "[Unit]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Description=Catminer Client" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "After=network.target" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "[Service]" | sudo tee --append /etc/systemd/system/catminer-client.service'
-            execute 'echo "User=ubuntu" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "Type=simple" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "User=root" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "Group=root" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WorkingDirectory=/home/' + user + '/catminer-client" | sudo tee --append /etc/systemd/system/catminer-client.service'
-            execute 'echo "ExecStart=RAILS_ENV=production RAILS_SERVE_STATIC_FILES=true bundle exec puma -d -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "Environment=RAILS_ENV=production" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "Environment=RAILS_SERVE_STATIC_FILES=true" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "ExecStart=/usr/local/bin/puma -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Restart=always" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "[Install]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WantedBy=multi-user.target" | sudo tee --append /etc/systemd/system/catminer-client.service'
@@ -167,8 +172,8 @@ module CatminerClient
     end
 
     def machines_from_config
-      if File.exist? __dir__ + '/../../machines.json'
-        file = File.read __dir__ + '/../../machines.json'
+      if File.exist? Dir.pwd + '/machines.json'
+        file = File.read Dir.pwd + '/machines.json'
         json = JSON.parse file
 
         user = json['user'] || 'ubuntu'
@@ -225,7 +230,9 @@ module CatminerClient
           test 'rm -rf /home/' + user + '/catminer-client/app'
           test 'rm -rf /home/' + user + '/catminer-client/bin'
           test 'rm -rf /home/' + user + '/catminer-client/config'
-          test 'rm -rf /home/' + user + '/catminer-client/db'
+          test 'rm -rf /home/' + user + '/catminer-client/db/migrate'
+          test 'rm /home/' + user + '/catminer-client/db/schema.rb'
+          test 'rm /home/' + user + '/catminer-client/db/seeds.rb'
           test 'rm -rf /home/' + user + '/catminer-client/lib'
           test 'rm -rf /home/' + user + '/catminer-client/public'
           test 'rm -rf /home/' + user + '/catminer-client/spec'
@@ -267,12 +274,11 @@ module CatminerClient
           upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
           upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
 
-          execute 'cd /home/' + user + '/catminer-client && sudo bundle install'
+          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
-          test 'sudo service catminer-client stop'
-          execute 'sudo service catminer-client start'
+          execute 'sudo service catminer-client restart'
         end
       end
     end

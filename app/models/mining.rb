@@ -38,7 +38,7 @@ class Mining < ApplicationRecord
         miner_path = "cd #{Dir.pwd}/vendor/miners/ewbf-miner && ./miner"
       end
 
-      "#{miner_path} #{self.arg}"
+      "#{miner_path} #{self.arg.gsub('$NAME', self.rig.name)}"
     else
       ''
     end
