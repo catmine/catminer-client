@@ -1,0 +1,6 @@
+production:
+  url: https://catminer.app
+development:
+  url: http://localhost:3000
+test:
+  url: http://localhost:3000

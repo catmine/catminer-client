@@ -3,15 +3,15 @@
 %table.table.table-responsive.table-striped
   %thead
     %tr
-      %th{ scope: 'col' } รายการ
-      %th{ scope: 'col' } ค่า
+      %th{ scope: 'col' } Value
+      %th{ scope: 'col' } Parameter
   %tbody
     %tr
       %td First Seen
       %td= l @rig.created_at, format: :long
     %tr
       %td Current mining command
-      %td
+      %td= @mining.to_s
     %tr
       %td GPUs
       %td= @rig.gpus.count

@@ -1,3 +1,6 @@
+require_relative '../../lib/models/drivers.rb'
+require_relative '../../lib/models/miners.rb'
+
 module CatminerClient
   class Configurator
     include SSHKit::DSL
@@ -12,6 +15,12 @@ module CatminerClient
     def bootstrap
       user = @user
 
+      drivers = CatminerClient::Drivers.new
+      miners = CatminerClient::Miners.new
+
+      drivers.all
+      miners.all
+
       on @machines do
         as user do
           execute "sudo sed -i -e 's/%admin ALL=(ALL) ALL/%admin ALL=NOPASSWD:ALL/g' /etc/sudoers"
@@ -23,10 +32,25 @@ module CatminerClient
 
           # Install Utilities program
           execute 'sudo apt-get update'
-          execute "sudo apt-get install -y htop libboost-all-dev cmake"
-
+          execute "sudo apt-get install -y htop"
+=begin
           # Upload client
-          test 'rm -rf /home/' + user + '/catminer-client'
+          test 'mkdir /home/' + user + '/catminer-client'
+
+          test 'rm -rf /home/' + user + '/catminer-client/app'
+          test 'rm -rf /home/' + user + '/catminer-client/bin'
+          test 'rm -rf /home/' + user + '/catminer-client/config'
+          test 'rm -rf /home/' + user + '/catminer-client/db'
+          test 'rm -rf /home/' + user + '/catminer-client/lib'
+          test 'rm -rf /home/' + user + '/catminer-client/public'
+          test 'rm -rf /home/' + user + '/catminer-client/spec'
+          test 'rm -rf /home/' + user + '/catminer-client/vendor'
+          test 'rm /home/' + user + '/catminer-client/.gitignore'
+          test 'rm /home/' + user + '/catminer-client/config.ru'
+          test 'rm /home/' + user + '/catminer-client/Gemfile'
+          test 'rm /home/' + user + '/catminer-client/Gemfile.lock'
+          test 'rm /home/' + user + '/catminer-client/package.json'
+          test 'rm /home/' + user + '/catminer-client/Rakefile'
 
           upload! Dir.pwd + '/app', '/home/' + user + '/catminer-client/app', recursive: true
           upload! Dir.pwd + '/bin', '/home/' + user + '/catminer-client/bin', recursive: true
@@ -55,14 +79,17 @@ module CatminerClient
           upload! Dir.pwd + '/Gemfile.lock', '/home/' + user + '/catminer-client/Gemfile.lock'
           upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
           upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
-
+=end
           # Install Nvidia Driver
           execute 'sudo add-apt-repository ppa:graphics-drivers'
           execute 'sudo apt-get update'
-          execute 'sudo apt-get install -y nvidia-390'
-          execute 'sudo apt-mark hold nvidia-390'
+          #execute 'sudo apt-get install -y nvidia-396'
+          #execute 'sudo apt-mark hold nvidia-396'
 
-          execute 'sudo sh /home/' + user + '/catminer-client/vendor/drivers/cuda.run'
+          execute 'sudo dpkg -i /home/' + user + '/catminer-client/vendor/drivers/cuda.deb'
+          execute 'sudo apt-key add /var/cuda-repo-9-2-local/7fa2af80.pub'
+          execute 'sudo apt-get update'
+          execute 'sudo apt-get install -y libboost-all-dev cmake cuda'
 
           environment = capture :cat, '/etc/environment'
 
@@ -109,18 +136,18 @@ module CatminerClient
             execute 'echo "[Service]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "User=ubuntu" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WorkingDirectory=/home/' + user + '/catminer-client" | sudo tee --append /etc/systemd/system/catminer-client.service'
-            execute 'echo "ExecStart=RAILS_ENV=production RAILS_SERVE_STATIC_FILES=true bundle exec /home/' + user + '/catminer-client/puma -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "ExecStart=RAILS_ENV=production RAILS_SERVE_STATIC_FILES=true bundle exec puma -d -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Restart=always" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "[Install]" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WantedBy=multi-user.target" | sudo tee --append /etc/systemd/system/catminer-client.service'
           end
 
-          execute 'cd /home/' + user + '/catminer-client && sudo bundle install'
+          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
           test 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:create'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
-          execute 'sudo service catminer-client stop'
+          test 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'
           execute 'sudo systemctl enable catminer-client'
         end
@@ -193,7 +220,21 @@ module CatminerClient
 
       on @machines do
         as user do
-          test 'rm -rf /home/' + user + '/catminer-client'
+          test 'mkdir /home/' + user + '/catminer-client'
+
+          test 'rm -rf /home/' + user + '/catminer-client/app'
+          test 'rm -rf /home/' + user + '/catminer-client/bin'
+          test 'rm -rf /home/' + user + '/catminer-client/config'
+          test 'rm -rf /home/' + user + '/catminer-client/db'
+          test 'rm -rf /home/' + user + '/catminer-client/lib'
+          test 'rm -rf /home/' + user + '/catminer-client/public'
+          test 'rm -rf /home/' + user + '/catminer-client/spec'
+          test 'rm /home/' + user + '/catminer-client/.gitignore'
+          test 'rm /home/' + user + '/catminer-client/config.ru'
+          test 'rm /home/' + user + '/catminer-client/Gemfile'
+          test 'rm /home/' + user + '/catminer-client/Gemfile.lock'
+          test 'rm /home/' + user + '/catminer-client/package.json'
+          test 'rm /home/' + user + '/catminer-client/Rakefile'
 
           upload! Dir.pwd + '/app', '/home/' + user + '/catminer-client/app', recursive: true
           upload! Dir.pwd + '/bin', '/home/' + user + '/catminer-client/bin', recursive: true
@@ -214,7 +255,10 @@ module CatminerClient
 
           test 'mkdir /home/' + user + '/catminer-client/tmp'
 
-          upload! Dir.pwd + '/vendor', '/home/' + user + '/catminer-client/vendor', recursive: true
+          test 'mkdir /home/' + user + '/catminer-client/vendor'
+          test 'rm -rf /home/' + user + '/catminer-client/vendor/miners'
+
+          upload! Dir.pwd + '/vendor/miners', '/home/' + user + '/catminer-client/vendor/miners', recursive: true
 
           upload! Dir.pwd + '/.gitignore', '/home/' + user + '/catminer-client/.gitignore'
           upload! Dir.pwd + '/config.ru', '/home/' + user + '/catminer-client/config.ru'
@@ -227,7 +271,7 @@ module CatminerClient
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
-          execute 'sudo service catminer-client stop'
+          test 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'
         end
       end

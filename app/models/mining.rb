@@ -7,6 +7,7 @@
 #  code       :integer
 #  miner      :integer
 #  arg        :text
+#  mining_at  :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -20,6 +21,7 @@ class Mining < ApplicationRecord
 
   belongs_to :rig
 
+  before_commit :set_default_mining_at
   after_commit :start_mining
 
   def execute_cmd
@@ -40,6 +42,10 @@ class Mining < ApplicationRecord
     else
       ''
     end
+  end
+
+  def set_default_mining_at
+    self.mining_at = Time.zone.now if self.mining_at.blank?
   end
 
   def start_mining

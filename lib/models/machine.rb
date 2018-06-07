@@ -66,9 +66,9 @@ module CatminerClient
           as :root do
             if gpu.brand == 'nvidia'
               execute "sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration"
-              execute "nvidia-smi -i #{i} -pl #{gpu.power_limit}"
-              execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUMemoryTransferRateOffset[3]=#{gpu.mem_clock}'"
-              execute "nvidia-settings -c :0 -a '[gpu:#{i}]/GPUGraphicsClockOffset[3]=#{gpu.gpu_clock}'"
+              execute("nvidia-smi -i #{i} -pl #{gpu.power_limit}") if gpu.power_limit.present?
+              execute("nvidia-settings -c :0 -a '[gpu:#{i}]/GPUMemoryTransferRateOffset[3]=#{gpu.mem_clock}'") if gpu.mem_clock.present?
+              execute("nvidia-settings -c :0 -a '[gpu:#{i}]/GPUGraphicsClockOffset[3]=#{gpu.gpu_clock}'") if gpu.gpu_clock.present?
             end
           end
         end

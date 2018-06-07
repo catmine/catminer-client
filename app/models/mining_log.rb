@@ -5,6 +5,7 @@
 #  id         :integer          not null, primary key
 #  rig_id     :integer
 #  line       :text
+#  reported   :boolean          default(FALSE)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -15,6 +16,8 @@
 
 class MiningLog < ApplicationRecord
   belongs_to :rig
+
+  scope :unreported, -> { where(reported: false) }
 
   def log_line
     "[#{I18n.l created_at, format: :long}]: #{line}"

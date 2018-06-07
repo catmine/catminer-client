@@ -5,6 +5,7 @@ class CreateMinings < ActiveRecord::Migration[5.1]
       t.integer :code
       t.integer :miner
       t.text :arg
+      t.datetime :mining_at
 
       t.timestamps
     end

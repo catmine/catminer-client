@@ -40,6 +40,7 @@ gem 'simple_form'
 gem 'enum_help'
 gem 'chartkick'
 gem 'sshkit'
+gem 'typhoeus'
 
 # CSS
 gem 'bootstrap'

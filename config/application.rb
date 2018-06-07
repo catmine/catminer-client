@@ -37,6 +37,9 @@ module CatminerClient
         ActiveRecord::Migration.check_pending!
         rig = Rig.default
         rig.start_mining
+
+        $report = CatminerClient::Reporter.new rig
+        $report.start_report
       rescue ActiveRecord::PendingMigrationError
       end
     end

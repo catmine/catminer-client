@@ -22,6 +22,7 @@ class Rig < ApplicationRecord
   after_create :set_default_overclock
   after_commit :change_hostname
   after_commit :overclock
+  after_commit :stop_mining, on: :create
 
   def self.default
     if Rig.all.count == 0
@@ -89,8 +90,12 @@ class Rig < ApplicationRecord
         gpu.power_limit = power_limit
         gpu.mem_clock = mem_clock
         gpu.gpu_clock = gpu_clock
+
+        gpu.save!
       end
     end
+
+    self.overclock
   end
 
   def start_mining
@@ -152,6 +157,7 @@ class Rig < ApplicationRecord
 
     unable_gpus = gpus_status.map{ |gpu_status| "uuid != '#{gpu_status[:uuid]}'" }.join(' and ')
     self.gpus.where(unable_gpus).update_all(enabled: false)
+    self.reload
   end
 
   def utilization

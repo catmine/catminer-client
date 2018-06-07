@@ -7,6 +7,7 @@
 #  code       :integer
 #  miner      :integer
 #  arg        :text
+#  mining_at  :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

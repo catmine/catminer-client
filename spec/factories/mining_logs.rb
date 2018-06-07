@@ -5,6 +5,7 @@
 #  id         :integer          not null, primary key
 #  rig_id     :integer
 #  line       :text
+#  reported   :boolean          default(FALSE)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
