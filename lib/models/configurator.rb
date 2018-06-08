@@ -225,6 +225,8 @@ module CatminerClient
 
       on @machines do
         as user do
+          execute 'sudo service catminer-client stop'
+
           test 'mkdir /home/' + user + '/catminer-client'
 
           test 'rm -rf /home/' + user + '/catminer-client/app'
@@ -278,7 +280,7 @@ module CatminerClient
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
 
-          execute 'sudo service catminer-client restart'
+          execute 'sudo service catminer-client start'
         end
       end
     end

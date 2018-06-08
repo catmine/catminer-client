@@ -69,8 +69,8 @@ class Rig < ApplicationRecord
 
       if gpu.brand == 'nvidia'
         power_limit = 0
-        mem_clock = 150
-        gpu_clock = 500
+        gpu_clock = 150
+        mem_clock = 1000
 
         # power consumption from url: https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
         if gpu.name.include? '1030'
@@ -88,8 +88,8 @@ class Rig < ApplicationRecord
         end
 
         gpu.power_limit = power_limit
-        gpu.mem_clock = mem_clock
         gpu.gpu_clock = gpu_clock
+        gpu.mem_clock = mem_clock
 
         gpu.save!
       end

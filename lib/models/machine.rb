@@ -67,11 +67,12 @@ module CatminerClient
       @rig.gpus.enable.each do |gpu|
         run_locally do
           as :root do
+            execute "sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration"
+
             if gpu.brand == 'nvidia'
-              execute "sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration"
               execute("sudo nvidia-smi -i #{i} -pl #{gpu.power_limit}") if gpu.power_limit.present?
-              execute("nvidia-settings -c :0 -a '[gpu:#{i}]/GPUMemoryTransferRateOffset[3]=#{gpu.mem_clock}'") if gpu.mem_clock.present?
-              execute("nvidia-settings -c :0 -a '[gpu:#{i}]/GPUGraphicsClockOffset[3]=#{gpu.gpu_clock}'") if gpu.gpu_clock.present?
+              execute("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUGraphicsClockOffset[2]=#{gpu.gpu_clock}\"") if gpu.gpu_clock.present?
+              execute("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUMemoryTransferRateOffset[2]=#{gpu.mem_clock}\"") if gpu.mem_clock.present?
             end
           end
         end

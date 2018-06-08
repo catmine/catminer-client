@@ -37,6 +37,7 @@ module CatminerClient
         ActiveRecord::Migration.check_pending!
         unless $0.end_with?('rake')
           rig = Rig.default
+          rig.overclock
           rig.start_mining
 
           $report = CatminerClient::Reporter.new rig

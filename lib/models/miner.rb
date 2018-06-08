@@ -11,11 +11,12 @@ module CatminerClient
     end
 
     def start(cmd)
-      Rails.application.reloader.wrap do
-        @rig = Rig.default
-        self.stop
+      
+      @rig = Rig.default
+      self.stop
 
-        @thread = Thread.new do
+      @thread = Thread.new do
+        Rails.application.reloader.wrap do
           MiningLog.create rig: @rig, line: '==================== Start Mining ===================='
 
           begin
