@@ -67,6 +67,14 @@ class MiningsController < ApplicationController
     redirect_to minings_path
   end
 
+  def restart
+    rig = Rig.default
+    rig.restart_miner
+
+    flash[:notice] = 'Miner has been restart.'
+    redirect_to minings_path
+  end
+
   # DELETE /minings/1
   # DELETE /minings/1.json
   def destroy

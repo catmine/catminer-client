@@ -64,6 +64,13 @@ class Rig < ApplicationRecord
     end
   end
 
+  def restart_miner
+    $miner ||= CatminerClient::Miner.new(Rig.default)
+    $miner.stop
+
+    self.start_mining
+  end
+
   def set_default_overclock
     self.gpus.each do |gpu|
 

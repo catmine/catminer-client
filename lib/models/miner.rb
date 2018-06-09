@@ -11,12 +11,11 @@ module CatminerClient
     end
 
     def start(cmd)
-      
-      @rig = Rig.default
       self.stop
 
       @thread = Thread.new do
-        Rails.application.reloader.wrap do
+        Rails.application.executor.wrap do
+          @rig = Rig.default
           MiningLog.create rig: @rig, line: '==================== Start Mining ===================='
 
           begin
@@ -25,6 +24,7 @@ module CatminerClient
 
               begin
                 stdout.each do |line|
+                  @rig = Rig.default
                   MiningLog.create rig: @rig, line: line
                 end
               rescue Errno::EIO

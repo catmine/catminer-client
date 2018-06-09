@@ -94,7 +94,7 @@ module CatminerClient
 
     def start_report
       @thread = Thread.new do
-        Rails.application.reloader.wrap do
+        Rails.application.executor.wrap do
           loop do
             begin
               report
