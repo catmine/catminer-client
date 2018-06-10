@@ -21,7 +21,7 @@ class Mining < ApplicationRecord
 
   belongs_to :rig
 
-  before_commit :set_default_mining_at
+  before_create :set_default_mining_at
   after_commit :start_mining
 
   def execute_cmd

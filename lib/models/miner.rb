@@ -10,28 +10,35 @@ module CatminerClient
       @rig = rig
     end
 
+    def add_log(line)
+      Rails.application.executor.wrap do
+        begin
+          rig = Rig.default
+          MiningLog.create rig: rig, line: line
+        rescue StandardError => e
+          Rails.logger.info 'Miner Error'
+        end
+      end
+    end
+
     def start(cmd)
       self.stop
 
       @thread = Thread.new do
-        Rails.application.executor.wrap do
-          @rig = Rig.default
-          MiningLog.create rig: @rig, line: '==================== Start Mining ===================='
+        self.add_log '==================== Start Mining ===================='
 
-          begin
-            PTY.spawn(cmd) do |stdout, stdin, pid|
-              @pid = pid
+        begin
+          PTY.spawn(cmd) do |stdout, stdin, pid|
+            @pid = pid
 
-              begin
-                stdout.each do |line|
-                  @rig = Rig.default
-                  MiningLog.create rig: @rig, line: line
-                end
-              rescue Errno::EIO
+            begin
+              stdout.each do |line|
+                self.add_log line
               end
+            rescue Errno::EIO
             end
-          rescue PTY::ChildExited
           end
+        rescue PTY::ChildExited
         end
       end
     end
@@ -41,8 +48,8 @@ module CatminerClient
         system "sudo kill -9 #{@pid}"
         system "sudo kill -9 #{@pid + 1}"
 
-        MiningLog.create rig: @rig, line: '==================== Stop Mining ===================='
-
+        self.add_log '==================== Stop Mining ===================='
+        
         @pid = nil
       end
     end

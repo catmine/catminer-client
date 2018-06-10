@@ -17,7 +17,7 @@ class Rig < ApplicationRecord
 
   accepts_nested_attributes_for :gpus
 
-  validates :name, :uuid, :secret, presence: true
+  validates :name, presence: true
 
   after_create :set_default_overclock
   after_commit :change_hostname
@@ -26,7 +26,7 @@ class Rig < ApplicationRecord
 
   def self.default
     if Rig.all.count == 0
-      rig = Rig.create name: `hostname`, uuid: SecureRandom.uuid, secret: SecureRandom.urlsafe_base64(nil, false)
+      rig = Rig.create name: `hostname`
       
       machine = CatminerClient::Machine.new(rig)
       

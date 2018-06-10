@@ -9,7 +9,7 @@ module CatminerClient
   
     def register
       @rig = Rig.default
-      response = Typhoeus.post SETTINGS['url'] + '/v3/rigs/register', body: { name: HOSTNAME }
+      response = Typhoeus.post SETTINGS['url'] + '/v3/rigs/register', body: { name: @rig.name }
 
       if response.code == 200
         json = JSON.parse response.body
@@ -33,54 +33,51 @@ module CatminerClient
       mining = @rig.minings.last
 
       body = {
-          mining: {
-            code: mining.code,
-            miner: mining.miner,
-            arg: mining.arg,
-            mining_at: mining.mining_at
-          },
-          initialized: @initialized,
-          secret: @rig.secret
+        mining: {
+          code: mining.code,
+          miner: mining.miner,
+          arg: mining.arg,
+          mining_at: mining.mining_at
+        }.to_json,
+        initialized: @initialized,
+        secret: @rig.secret
+      }
+
+      body[:gpus_log] = @rig.gpus.enable.map { |gpu|
+        {
+          utilization: gpu.utilization,
+          power: gpu.power,
+          temperature: gpu.temperature,
+          fan: gpu.fan,
+          memory_used: gpu.memory_used
         }
+      }.to_json
 
-      body[:gpus_log] = Array.new
-      @rig.gpus.enable.each do |gpu|
-        body[:gpus_log] << {
-            utilization: gpu.utilization,
-            power: gpu.power,
-            temperature: gpu.temperature,
-            fan: gpu.fan,
-            memory_used: gpu.memory_used
-          }
-      end
-
-      body[:mining_logs] = Array.new
       mining_logs = @rig.mining_logs.unreported
-      mining_logs.each do |mining_log|
-        body[:mining_logs] << {
-          line: mining_log.line,
+      body[:mining_logs] = mining_logs.map { |mining_log|
+        {
+          line: mining_log.line.force_encoding("ISO-8859-1").encode("UTF-8"),
           line_at: mining_log.created_at
         }
-      end
+      }.to_json
 
       unless @initialized
         @initialized = true
-        body[:gpus] = Array.new
 
-        @rig.gpus.enable.each do |gpu|
-          body[:gpus] << {
-              name: gpu.name,
-              uuid: gpu.uuid,
-              memory: gpu.memory
-            }
-        end
+        body[:gpus] = @rig.gpus.enable.map { |gpu|
+          {
+            name: gpu.name,
+            uuid: gpu.uuid,
+            memory: gpu.memory
+          }
+        }.to_json
       end
 
       response = Typhoeus.post SETTINGS['url'] + '/v3/rigs/' + @rig.uuid, body: body
 
       if response.code == 200
         json = JSON.parse response.body
-        mining_at = DateTime.parse(json['mining']['mining_at'])
+        mining_at = DateTime.parse json['mining']['mining_at']
 
         if mining_at != mining.mining_at
           if mining_at > mining.mining_at
@@ -94,15 +91,19 @@ module CatminerClient
 
     def start_report
       @thread = Thread.new do
-        Rails.application.executor.wrap do
-          loop do
-            begin
-              report
-            rescue StandardError
+        loop do
+          begin
+            Rails.application.executor.wrap do
+              if @rig.uuid.present? && @rig.secret.present?
+                report
+              else
+                register
+              end
             end
-
-            sleep 20
+          rescue StandardError
           end
+
+          sleep 10
         end
       end
     end
