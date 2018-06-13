@@ -7,13 +7,16 @@ module CatminerClient
 
     attr_accessor :machines
     attr_accessor :user
+    attr_accessor :env
 
     def initialize
       @machines = self.machines_from_config
+      @env = 'production'
     end
 
     def bootstrap
       user = @user
+      env = @env
 
       drivers = CatminerClient::Drivers.new
       miners = CatminerClient::Miners.new
@@ -33,7 +36,7 @@ module CatminerClient
           # Install Utilities program
           execute 'sudo apt-get update'
           execute "sudo apt-get install -y htop"
-=begin
+
           # Upload client
           test 'mkdir /home/' + user + '/catminer-client'
 
@@ -79,7 +82,7 @@ module CatminerClient
           upload! Dir.pwd + '/Gemfile.lock', '/home/' + user + '/catminer-client/Gemfile.lock'
           upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
           upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
-=end
+
           # Install Nvidia Driver
           execute 'sudo add-apt-repository ppa:graphics-drivers'
           execute 'sudo apt-get update'
@@ -139,7 +142,7 @@ module CatminerClient
             execute 'echo "User=root" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Group=root" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "WorkingDirectory=/home/' + user + '/catminer-client" | sudo tee --append /etc/systemd/system/catminer-client.service'
-            execute 'echo "Environment=RAILS_ENV=production" | sudo tee --append /etc/systemd/system/catminer-client.service'
+            execute 'echo "Environment=RAILS_ENV='+ env + '" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Environment=RAILS_SERVE_STATIC_FILES=true" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "ExecStart=/usr/local/bin/puma -p 80" | sudo tee --append /etc/systemd/system/catminer-client.service'
             execute 'echo "Restart=always" | sudo tee --append /etc/systemd/system/catminer-client.service'
@@ -148,9 +151,9 @@ module CatminerClient
           end
 
           execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
-          test 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:create'
-          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
-          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
+          test 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:create'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:migrate'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake assets:precompile'
 
           test 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'
@@ -222,6 +225,7 @@ module CatminerClient
 
     def update
       user = @user
+      env = @env
 
       on @machines do
         as user do
@@ -277,8 +281,8 @@ module CatminerClient
           upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
 
           execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
-          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake db:migrate'
-          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV=production rake assets:precompile'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:migrate'
+          execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake assets:precompile'
 
           execute 'sudo service catminer-client start'
         end

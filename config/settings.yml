@@ -1,5 +1,7 @@
 production:
   url: https://catminer.app/api
+staging:
+  url: https://staging.catminer.app/api
 development:
   url: http://localhost:3000/api
 test:

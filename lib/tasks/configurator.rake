@@ -6,6 +6,7 @@ namespace :configurator do
     configurator = CatminerClient::Configurator.new
     configurator.machines = ENV['machines'].split(',') if ENV['machines'] != nil
     configurator.user = ENV['user'] if ENV['user'] != nil
+    configurator.env = ENV['env'] if ENV['env'] != nil
     configurator.bootstrap
   end
 
@@ -30,14 +31,7 @@ namespace :configurator do
     configurator = CatminerClient::Configurator.new
     configurator.machines = ENV['machines'].split(',') if ENV['machines'] != nil
     configurator.user = ENV['user'] if ENV['user'] != nil
+    configurator.env = ENV['env'] if ENV['env'] != nil
     configurator.update
-  end
-
-  desc 'Remove catwork'
-  task :remove_catwork do
-    configurator = CatminerClient::Configurator.new
-    configurator.machines = ENV['machines'].split(',') if ENV['machines'] != nil
-    configurator.user = ENV['user'] if ENV['user'] != nil
-    configurator.remove_catwork
   end
 end
