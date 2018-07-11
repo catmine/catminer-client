@@ -61,6 +61,14 @@ module CatminerClient
         }
       }.to_json
 
+      commands = @rig.commands.unreported
+      body[:commands] = commands.map { |command|
+        {
+          id: command.command_id,
+          status: command.status
+        }
+      }.to_json
+
       unless @initialized
         @initialized = true
 
@@ -86,29 +94,14 @@ module CatminerClient
         end
 
         mining_logs.update_all reported: true
+        
+        if json['commands'].present?
+          json['commands'].each do |cmd|
+            command = @rig.commands.where(command_id: cmd['id'].to_i).first
 
-        if json['command'].present?
-          machine = CatminerClient::Machine.new @rig
-
-          # Reboot
-          if json['command']['code'] == 1
-            machine.reboot
-          # Shutdown
-          elsif json['command']['code'] == 2
-            machine.shutdown
-          # Overclock
-          elsif json['command']['code'] == 3
-            gpus = json['command']['args']
-
-            @rig.gpus.enabled.each do |gpu|
-              gpu.power_limit = gpus[i]['power_limit']
-              gpu.gpu_clock = gpus[i]['gpu_clock']
-              gpu.mem_clock = gpus[i]['mem_clock']
-
-              gpu.save!
+            if command.blank?
+              @rig.commands.create! command_id: cmd['id'].to_i, code: cmd['code'].to_i, args: cmd['args']
             end
-
-            @rig.overclock
           end
         end
       end

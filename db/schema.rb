@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180603043730) do
+ActiveRecord::Schema.define(version: 20180711042029) do
+
+  create_table "commands", force: :cascade do |t|
+    t.integer "rig_id"
+    t.integer "command_id"
+    t.integer "code"
+    t.string "args"
+    t.boolean "executed", default: false
+    t.datetime "executed_at"
+    t.boolean "reported", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rig_id"], name: "index_commands_on_rig_id"
+  end
 
   create_table "gpus", force: :cascade do |t|
     t.string "name"

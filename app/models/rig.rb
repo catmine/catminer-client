@@ -11,6 +11,7 @@
 #
 
 class Rig < ApplicationRecord
+  has_many :commands
   has_many :gpus, inverse_of: :rig
   has_many :mining_logs
   has_many :minings
