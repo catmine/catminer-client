@@ -86,6 +86,31 @@ module CatminerClient
         end
 
         mining_logs.update_all reported: true
+
+        if json['command'].present?
+          machine = CatminerClient::Machine.new @rig
+
+          # Reboot
+          if json['command']['code'] == 1
+            machine.reboot
+          # Shutdown
+          elsif json['command']['code'] == 2
+            machine.shutdown
+          # Overclock
+          elsif json['command']['code'] == 3
+            gpus = json['command']['args']
+
+            @rig.gpus.enabled.each do |gpu|
+              gpu.power_limit = gpus[i]['power_limit']
+              gpu.gpu_clock = gpus[i]['gpu_clock']
+              gpu.mem_clock = gpus[i]['mem_clock']
+
+              gpu.save!
+            end
+
+            @rig.overclock
+          end
+        end
       end
     end
 

@@ -28,7 +28,7 @@ class Rig < ApplicationRecord
     if Rig.all.count == 0
       rig = Rig.create name: `hostname`
       
-      machine = CatminerClient::Machine.new(rig)
+      machine = CatminerClient::Machine.new rig
       
       rig.update_gpus
       rig.set_default_overclock
@@ -41,12 +41,12 @@ class Rig < ApplicationRecord
   end
 
   def change_hostname
-    machine = CatminerClient::Machine.new(self)
+    machine = CatminerClient::Machine.new self
     machine.hostname = self.name
   end
 
   def overclock
-    machine = CatminerClient::Machine.new(self)
+    machine = CatminerClient::Machine.new self
     machine.overclock
   end
 
@@ -138,7 +138,7 @@ class Rig < ApplicationRecord
   end
 
   def update_gpus
-    machine = CatminerClient::Machine.new(self)
+    machine = CatminerClient::Machine.new self
     gpus_status = machine.gpus
 
     gpus_status.each do |gpu_status|
