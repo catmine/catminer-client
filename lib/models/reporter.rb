@@ -76,7 +76,10 @@ module CatminerClient
           {
             name: gpu.name,
             uuid: gpu.uuid,
-            memory: gpu.memory
+            memory: gpu.memory,
+            power_limit: gpu.power_limit,
+            mem_clock: gpu.mem_clock,
+            gpu_clock: gpu.gpu_clock
           }
         }.to_json
       end
