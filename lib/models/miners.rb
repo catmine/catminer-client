@@ -31,9 +31,10 @@ module CatminerClient
     def claymore
       run_locally do
         unless test "[ -d #{Dir.pwd}/vendor/miners/claymore ]"
-          execute "wget https://github.com/nanopool/Claymore-Dual-Miner/releases/download/v10.0/Claymore.s.Dual.Ethereum.Decred_Siacoin_Lbry_Pascal.AMD.NVIDIA.GPU.Miner.v10.0.-.LINUX.tar.gz -P #{Dir.pwd}/vendor/miners"
+          execute "wget https://github.com/nanopool/Claymore-Dual-Miner/releases/download/v11.8/Claymore.s.Dual.Ethereum.Decred_Siacoin_Lbry_Pascal_Blake2s_Keccak.AMD.NVIDIA.GPU.Miner.v11.8.-.LINUX.tar.gz -P #{Dir.pwd}/vendor/miners"
           test "mkdir #{Dir.pwd}/vendor/miners/claymore"
-          execute "tar -xvzf #{Dir.pwd}/vendor/miners/Claymore.s.Dual.Ethereum.Decred_Siacoin_Lbry_Pascal.AMD.NVIDIA.GPU.Miner.v10.0.-.LINUX.tar.gz -C #{Dir.pwd}/vendor/miners/claymore"
+          execute "tar -xvzf #{Dir.pwd}/vendor/miners/Claymore.s.Dual.Ethereum.Decred_Siacoin_Lbry_Pascal_Blake2s_Keccak.AMD.NVIDIA.GPU.Miner.v11.8.-.LINUX.tar.gz -C #{Dir.pwd}/vendor/miners/claymore"
+          execute "cd \"#{Dir.pwd}/vendor/miners/claymore/Claymore's Dual Ethereum+Decred_Siacoin_Lbry_Pascal_Blake2s_Keccak AMD+NVIDIA GPU Miner v11.8 - LINUX\" && mv * ../"
         end
       end
     end
@@ -41,9 +42,9 @@ module CatminerClient
     def ethminer
       run_locally do
         unless test "[ -d #{Dir.pwd}/vendor/miners/ethminer ]"
-          execute "wget https://github.com/ethereum-mining/ethminer/releases/download/v0.13.0rc7/ethminer-0.13.0rc7-Linux.tar.gz -P #{Dir.pwd}/vendor/miners"
+          execute "wget https://github.com/ethereum-mining/ethminer/releases/download/v0.15.0rc2/ethminer-0.15.0rc2-Linux.tar.gz -P #{Dir.pwd}/vendor/miners"
           test "mkdir #{Dir.pwd}/vendor/miners/ethminer"
-          execute "tar -xvzf #{Dir.pwd}/vendor/miners/ethminer-0.13.0rc7-Linux.tar.gz -C #{Dir.pwd}/vendor/miners/ethminer"
+          execute "tar -xvzf #{Dir.pwd}/vendor/miners/ethminer-0.15.0rc2-Linux.tar.gz -C #{Dir.pwd}/vendor/miners/ethminer"
         end
       end
     end

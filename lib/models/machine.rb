@@ -40,7 +40,7 @@ module CatminerClient
 
       run_locally do
         as :root do
-          hostname = capture(:cat, '/etc/hostname').strip
+          hostname = capture(:cat, '/etc/hostname').strip.delete("\n")
         end
       end
 

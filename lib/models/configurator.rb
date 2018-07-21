@@ -25,7 +25,7 @@ module CatminerClient
       miners.all
 
       on @machines do
-        as user do
+        #as user do
           execute "sudo sed -i -e 's/%admin ALL=(ALL) ALL/%admin ALL=NOPASSWD:ALL/g' /etc/sudoers"
           execute "sudo sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash pci=nomsi\"/g' /etc/default/grub"
           execute "sudo sed -i -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX=\"text pci=nomsi\"/g' /etc/default/grub"
@@ -158,7 +158,7 @@ module CatminerClient
           test 'sudo service catminer-client stop'
           execute 'sudo service catminer-client start'
           execute 'sudo systemctl enable catminer-client'
-        end
+        #end
 
         as 'root' do
           execute 'reboot'
@@ -228,7 +228,7 @@ module CatminerClient
       env = @env
 
       on @machines do
-        as user do
+        #as user do
           execute 'sudo service catminer-client stop'
 
           test 'mkdir /home/' + user + '/catminer-client'
@@ -285,7 +285,7 @@ module CatminerClient
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake assets:precompile'
 
           execute 'sudo service catminer-client start'
-        end
+        #end
       end
     end
   end
