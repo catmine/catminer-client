@@ -63,6 +63,7 @@ module CatminerClient
     end
 
     def overclock
+      return
       i = 0
       @rig.gpus.enable.each do |gpu|
         run_locally do

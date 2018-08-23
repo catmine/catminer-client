@@ -6,6 +6,11 @@ module CatminerClient
       @initialized = false
       @rig = rig
     end
+
+    def clean
+      mining_logs = MiningLog.reported.where('created_at <= ?', 7.days)
+      mining_logs.delete_all
+    end
   
     def register
       @rig = Rig.default
@@ -120,6 +125,8 @@ module CatminerClient
               else
                 register
               end
+
+              clean
             end
           rescue StandardError
           end

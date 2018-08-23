@@ -17,6 +17,7 @@
 class MiningLog < ApplicationRecord
   belongs_to :rig
 
+  scope :reported, -> { where(reported: true) }
   scope :unreported, -> { where(reported: false) }
 
   def log_line
