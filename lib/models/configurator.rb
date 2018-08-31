@@ -150,7 +150,7 @@ module CatminerClient
             execute 'echo "WantedBy=multi-user.target" | sudo tee --append /etc/systemd/system/catminer-client.service'
           end
 
-          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
+          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --force --without development test'
           test 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:create'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake assets:precompile'
@@ -280,7 +280,7 @@ module CatminerClient
           upload! Dir.pwd + '/package.json', '/home/' + user + '/catminer-client/package.json'
           upload! Dir.pwd + '/Rakefile', '/home/' + user + '/catminer-client/Rakefile'
 
-          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --without development test'
+          execute 'cd /home/' + user + '/catminer-client && sudo bundle install --force --without development test'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake db:migrate'
           execute 'cd /home/' + user + '/catminer-client && RAILS_ENV='+ env + ' rake assets:precompile'
 

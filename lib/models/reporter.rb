@@ -8,7 +8,7 @@ module CatminerClient
     end
 
     def clean
-      mining_logs = MiningLog.reported.where('created_at <= ?', 7.days)
+      mining_logs = MiningLog.reported.where('created_at <= ?', 1.days.ago)
       mining_logs.delete_all
     end
   

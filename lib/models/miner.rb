@@ -11,12 +11,14 @@ module CatminerClient
     end
 
     def add_log(line)
-      Rails.application.executor.wrap do
-        begin
-          rig = Rig.default
-          MiningLog.create rig: rig, line: line
-        rescue StandardError => e
-          Rails.logger.info 'Miner Error'
+      Thread.new do
+        Rails.application.executor.wrap do
+          begin
+            rig = Rig.default
+            MiningLog.create rig: rig, line: line
+          rescue StandardError => e
+            Rails.logger.info 'Miner Error'
+          end
         end
       end
     end
