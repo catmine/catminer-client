@@ -27,7 +27,7 @@ class Rig < ApplicationRecord
 
   def self.default
     if Rig.all.count == 0
-      rig = Rig.create name: `hostname`
+      rig = Rig.create name: `hostname`.strip
       
       machine = CatminerClient::Machine.new rig
       

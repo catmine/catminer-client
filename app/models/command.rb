@@ -54,6 +54,8 @@ class Command < ApplicationRecord
         end
 
         self.rig.overclock
+      elsif self.code == 4
+        self.rig.update name: self.args
       end
     end
   end
