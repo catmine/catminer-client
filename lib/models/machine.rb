@@ -63,7 +63,6 @@ module CatminerClient
     end
 
     def overclock
-      return
       i = 0
       @rig.gpus.enable.each do |gpu|
         run_locally do
@@ -72,8 +71,8 @@ module CatminerClient
 
             if gpu.brand == 'nvidia'
               execute("sudo nvidia-smi -i #{i} -pl #{gpu.power_limit}") if gpu.power_limit.present?
-              execute("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUGraphicsClockOffset[2]=#{gpu.gpu_clock}\"") if gpu.gpu_clock.present?
-              execute("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUMemoryTransferRateOffset[2]=#{gpu.mem_clock}\"") if gpu.mem_clock.present?
+              test("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUGraphicsClockOffset[2]=#{gpu.gpu_clock}\"") if gpu.gpu_clock.present?
+              test("sudo DISPLAY=:0 XAUTHORITY=/var/run/lightdm/root/:0 nvidia-settings --assign \"[gpu:#{i}]/GPUMemoryTransferRateOffset[2]=#{gpu.mem_clock}\"") if gpu.mem_clock.present?
             end
           end
         end
